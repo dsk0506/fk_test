@@ -10,13 +10,13 @@ def cur(request):
         conn.close()
 
     request.addfinalizer(fin)
-    conn = MySQLdb.connect(host='localhost', user='root', passwd='dsk840506', db='test', port=3306)
+    conn = MySQLdb.connect(host='localhost', user='root', passwd='', db='test', port=3306)
     db_cur = conn.cursor()
     return db_cur
 
 
 def test_user(cur):
-    print cur.execute('select * from admins')
+    print cur.execute('select * from student')
     assert 1 == 1
 
 
