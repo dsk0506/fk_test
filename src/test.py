@@ -1,4 +1,4 @@
-#!../env/bin/python
+#!env/bin/python
 import pytest  
   
-exit(pytest.main("-q -s ./tests"))
+exit(pytest.main("-q -s ./src/tests"))
