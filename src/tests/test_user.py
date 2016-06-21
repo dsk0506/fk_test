@@ -10,7 +10,7 @@ def cur(request):
         conn.close()
 
     request.addfinalizer(fin)
-    conn = MySQLdb.connect(host='localhost', user='root', passwd='', db='test', port=3306)
+    conn = MySQLdb.connect(host='localhost', user='root', passwd='zhang', db='test', port=3306)
     db_cur = conn.cursor()
     return db_cur
 
@@ -20,5 +20,9 @@ def test_user(cur):
     assert 1 == 1
 
 
-def test_user1():
+def test_login_success():
     assert 1 == 1
+
+
+def test_login_fail():
+    pass
