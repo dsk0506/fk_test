@@ -1,16 +1,21 @@
 import pytest
 import MySQLdb
-@pytest.fixture(scope="session")
+from config import config
+
+
+@pytest.fixture(scope="function")
 def cur(request):
     def fin():
-        db_cur.close()
-        conn.close()
-        print  'db over'
+        if db_cur:
+            db_cur.close()
+            conn.close()
+
     request.addfinalizer(fin)
-    conn = MySQLdb.connect(host='localhost', user='root', passwd='', db='test', port=3306)
+    host = config.get_config('database', 'db_host')
+    user = config.get_config('database', 'db_user')
+    passwd = config.get_config('database', 'db_password')
+    name = config.get_config('database', 'db_name')
+    port = config.get_config('database', 'db_port')
+    conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=name, port=int(port))
     db_cur = conn.cursor()
     return db_cur
-
-@pytest.fixture(scope="module")
-def smtp():
-    print 123
