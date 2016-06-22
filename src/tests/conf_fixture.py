@@ -19,10 +19,12 @@ def redis_init():
     redis_host = config.get_config('redis', 'host')
     redis_db = config.get_config('redis', 'database')
     redis_port = int(config.get_config('redis', 'port'))
-    #redis_conn = os.popen('redis-cli -h ',redis_host,'-p ',redis_port, '-n ',redis_db);
+    redis_shell = 'redis-cli -h %s -p %s -n %s' %(redis_host,redis_port,redis_db)
+    kill_shell = redis_shell+' KEYS "*" | xargs '+redis_shell+' DEL'
+    #os.system(kill_shell);
     print "这里面redis初始化"
 
-
+redis_init()
 @pytest.fixture(scope="session", autouse=True)
 def data_init():
     db_init()
