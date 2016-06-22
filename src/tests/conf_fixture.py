@@ -19,7 +19,7 @@ def redis_init():
     redis_host = config.get_config('redis', 'host')
     redis_db = config.get_config('redis', 'database')
     redis_port = int(config.get_config('redis', 'port'))
-    redis_conn = os.popen('redis-cli -h ',redis_host,'-p ',redis_port, '-n ',redis_db);
+    #redis_conn = os.popen('redis-cli -h ',redis_host,'-p ',redis_port, '-n ',redis_db);
     print "这里面redis初始化"
 
 
