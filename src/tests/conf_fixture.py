@@ -58,10 +58,11 @@ def redis_cur(request):
     return redis_conn
 
 
+@pytest.fixture(scope="function")
 def mongo_cur():
     mongo_host = config.get_config('mongo', 'db_host')
     mongo_db = config.get_config('mongo', 'db_name')
     mongo_port = int(config.get_config('mongo', 'db_port'))
-    mongo_client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
-    mongo_conn = mongo_client.mongo_db
+    mongo_client = pymongo.MongoClient(host=mongo_host, port=int(mongo_port))
+    mongo_conn = mongo_client[mongo_db]
     return mongo_conn
