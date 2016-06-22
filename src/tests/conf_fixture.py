@@ -1,8 +1,29 @@
+# coding:utf-8
 import pytest
 import MySQLdb
 import redis
 import pymongo
 from config import config
+
+
+@pytest.fixture(scope="session", autouse=True)
+def db_init():
+    print "这里面数据库初始化"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mongo_init():
+    print "这里面mongo初始化"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def redis_init():
+    print "这里面redis初始化"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def data_init():
+    print "这里面数据初始化初始化"
 
 
 @pytest.fixture(scope="function")
