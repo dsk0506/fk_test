@@ -6,23 +6,23 @@ import pymongo
 from config import config
 
 
-@pytest.fixture(scope="session", autouse=True)
 def db_init():
     print "这里面数据库初始化"
 
 
-@pytest.fixture(scope="session", autouse=True)
 def mongo_init():
     print "这里面mongo初始化"
 
 
-@pytest.fixture(scope="session", autouse=True)
 def redis_init():
     print "这里面redis初始化"
 
 
 @pytest.fixture(scope="session", autouse=True)
 def data_init():
+    db_init()
+    mongo_init()
+    redis_init()
     print "这里面数据初始化初始化"
 
 
@@ -68,6 +68,6 @@ def mongo_cur(request):
     mongo_host = config.get_config('mongo', 'db_host')
     mongo_db = config.get_config('mongo', 'db_name')
     mongo_port = config.get_config('mongo', 'db_port')
-    mongo_client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
-    mongo_conn = mongo_client.mongo_db
+    mongo_client = pymongo.MongoClient(host=mongo_host, port=int(mongo_port))
+    mongo_conn = mongo_client[mongo_db]
     return mongo_conn
