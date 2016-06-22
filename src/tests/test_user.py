@@ -1,7 +1,7 @@
 # coding:utf-8
 import requests
 import json
-from conf_fixture import mongo_cur
+from conftest import mongo_cur
 
 def test_user():
     assert 1 == 1
