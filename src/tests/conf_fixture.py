@@ -53,21 +53,15 @@ def redis_cur(request):
     request.addfinalizer(fin)
     redis_host = config.get_config('redis', 'host')
     redis_db = config.get_config('redis', 'database')
-    redis_port = config.get_config('redis', 'port')
+    redis_port = int(config.get_config('redis', 'port'))
     redis_conn = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db)
     return redis_conn
 
 
-@pytest.fixture(scope="function")
-def mongo_cur(request):
-    def fin():
-        if mongo_client:
-            mongo_client.close()
-
-    request.addfinalizer(fin)
+def mongo_cur():
     mongo_host = config.get_config('mongo', 'db_host')
     mongo_db = config.get_config('mongo', 'db_name')
-    mongo_port = config.get_config('mongo', 'db_port')
-    mongo_client = pymongo.MongoClient(host=mongo_host, port=int(mongo_port))
-    mongo_conn = mongo_client[mongo_db]
+    mongo_port = int(config.get_config('mongo', 'db_port'))
+    mongo_client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
+    mongo_conn = mongo_client.mongo_db
     return mongo_conn
