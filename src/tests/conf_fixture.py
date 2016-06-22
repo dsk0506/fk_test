@@ -36,6 +36,7 @@ def redis_cur(request):
     redis_conn = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db)
     return redis_conn
 
+
 @pytest.fixture(scope="function")
 def mongo_cur(request):
     def fin():
