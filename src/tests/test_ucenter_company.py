@@ -1,8 +1,11 @@
 # coding:utf-8
 import requests
 import json
+import time
 
 def test_login():
+    print 22
+    time.sleep(1)
     url = 'http://me.fk2.qa/api/ucenter/login' 
     data = {'username': 'xixi', 'password': '123123'}
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}

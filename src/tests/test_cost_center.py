@@ -9,7 +9,7 @@ headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode
 
 def _login():
     data = {'username': 'test', 'password': '123123'}
-    res = requests.post(url+'ucenter/login', data=data, headers=headers)
+    res = requests.post(url + 'ucenter/login', data=data, headers=headers)
     user = json.loads(res.text)['data']
     return user
 
@@ -17,7 +17,7 @@ def _login():
 def _post(route, data):
     user = _login()
     headers['Token'] = user['token']
-    response = requests.post(url+route, data=data, headers=headers)
+    response = requests.post(url + route, data=data, headers=headers)
     return json.loads(response.text)
  
 
@@ -174,6 +174,7 @@ def test_unfreeze_success(cur):
     response = _post('cost_center/unfreeze', {'cost_center_id': cost_center_id})   
     print(response)
      
+
 
 if __name__ == '__main__':
     conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='123123', db='demo27', port=3306)
