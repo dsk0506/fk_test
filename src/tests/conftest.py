@@ -3,6 +3,7 @@ import pytest
 import MySQLdb
 import redis
 import pymongo
+import os
 from config import config
 
 
@@ -15,6 +16,10 @@ def mongo_init():
 
 
 def redis_init():
+    redis_host = config.get_config('redis', 'host')
+    redis_db = config.get_config('redis', 'database')
+    redis_port = int(config.get_config('redis', 'port'))
+    #redis_conn = os.popen('redis-cli -h ',redis_host,'-p ',redis_port, '-n ',redis_db);
     print "这里面redis初始化"
 
 
@@ -45,12 +50,7 @@ def cur(request):
 
 
 @pytest.fixture(scope="function")
-def redis_cur(request):
-    def fin():
-        if redis_conn:
-            redis_conn.shutdown()
-
-    request.addfinalizer(fin)
+def redis_cur():
     redis_host = config.get_config('redis', 'host')
     redis_db = config.get_config('redis', 'database')
     redis_port = int(config.get_config('redis', 'port'))
@@ -59,7 +59,12 @@ def redis_cur(request):
 
 
 @pytest.fixture(scope="function")
-def mongo_cur():
+def mongo_cur(request):
+    def fin():
+        if mongo_client:
+            mongo_client.close()
+
+    request.addfinalizer(fin)
     mongo_host = config.get_config('mongo', 'db_host')
     mongo_db = config.get_config('mongo', 'db_name')
     mongo_port = int(config.get_config('mongo', 'db_port'))
