@@ -19,6 +19,7 @@ def db_init():
     port = config.get_config('database', 'db_port')
     mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
     init_shell = mysql_conn+' -N -s information_schema -e ' + '\"SELECT CONCAT(\'TRUNCATE TABLE \',TABLE_NAME,\';\') FROM TABLES WHERE TABLE_SCHEMA=\''+ name + '\'\"'+'|' +mysql_conn + ' -f '+ name
+
     #os.system(init_shell)
     print "这里面数据库初始化"
 
@@ -37,7 +38,7 @@ def mongo_init():
     # os.system(init_shell)
     print "这里面mongo初始化"
 
-mongo_init()
+
 def redis_init():
     '''
     redis清空
