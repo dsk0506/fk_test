@@ -24,7 +24,7 @@ def db_init():
     #os.system(init_shell)
     print "这里面数据库初始化"
 
-db_init()
+
 def mongo_init():
     '''
     mongo初始化
