@@ -24,11 +24,17 @@ def db_init():
 
 
 def mongo_init():
+    '''
+    mongo初始化
+    :return:
+    '''
     mongo_host = config.get_config('mongo', 'db_host')
     mongo_db = config.get_config('mongo', 'db_name')
     mongo_port = int(config.get_config('mongo', 'db_port'))
     mongo_conn = 'mongo %s:%s/%s' %(mongo_host,mongo_port,mongo_db)
-    print mongo_conn
+    init_shell = mongo_conn+" --quiet --eval 'db.dropDatabase();'"
+    print init_shell
+    # os.system(init_shell)
     print "这里面mongo初始化"
 
 mongo_init()
@@ -41,8 +47,8 @@ def redis_init():
     redis_db = config.get_config('redis', 'database')
     redis_port = int(config.get_config('redis', 'port'))
     redis_shell = 'redis-cli -h %s -p %s -n %s' %(redis_host,redis_port,redis_db)
-    kill_shell = redis_shell+' KEYS "*" | xargs '+redis_shell+' DEL'
-    #os.system(kill_shell);
+    init_shell = redis_shell+' KEYS "*" | xargs '+redis_shell+' DEL'
+    #os.system(init_shell);
     print "这里面redis初始化"
 
 
