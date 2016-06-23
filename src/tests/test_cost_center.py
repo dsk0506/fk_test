@@ -2,6 +2,7 @@
 import requests
 import json
 import MySQLdb
+from conf_fixture import cur
 
 url = 'http://xlb.local.fk.com/' 
 headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}
@@ -22,7 +23,7 @@ def _post(route, data):
  
 
 def test_create_success(cur):
-    data = {'pid': 0, 'serial_no': "serial_no0001", 'title':'the test cost center', 'type':'1', 'user_id':7}
+    data = {'pid': 0, 'serial_no': 'serial_no0001', 'title':'the test cost center', 'type':'1', 'user_id':7}
     response = _post('cost_center/create', data)
     assert response['status'] == 0
 
@@ -40,7 +41,7 @@ def test_create_error_serialno_existed():
     '''
         重复添加成本中心错误
     '''
-    data = {'pid': 0, 'serial_no': "serial_no_existed_0001", 'title':'the test cost center', 'type':'1', 'user_id':7}
+    data = {'pid': 0, 'serial_no': 'serial_no0001', 'title':'the test cost center', 'type':'1', 'user_id':7}
     _post('cost_center/create', data)
     response = _post('cost_center/create', data)
     data_json = json.dumps(response)
@@ -69,7 +70,7 @@ def test_list_success(cur):
     res = cur.fetchone()
     total_cost_center_num = int(res[0]) if res is not None else 0
     #成本中心列表
-    cur.execute('''select * from clb_cost_center where company_id = %s''' % company_id)
+    cur.execute('''select * from clb_cost_center where enable = 1 and company_id = %s''' % company_id)
     cost_center_list_db = cur.fetchmany()
     #成本中心已用数量
     used_cost_center_num = len(cost_center_list_db)
@@ -80,7 +81,7 @@ def test_list_success(cur):
     #比对成本中心列表
     cost_center_list = []
     for cost_center in cost_center_list_db:
-        cost_center_dict = {
+       cost_center_dict = {
             u'cost_center_id' : int(cost_center[0]),
             u'title' : unicode(cost_center[1]),
             u'serial_no' : unicode(cost_center[3]),
@@ -89,10 +90,11 @@ def test_list_success(cur):
             u'enable' : cost_center[6],
             u'children' : []
         }
-        cost_center_list.append(cost_center_dict) 
-    compaire_result = cmp(cost_center_list, cost_center_data['list'])
-    assert compaire_result == 0
-
+       cost_center_list.append(cost_center_dict) 
+    print(cost_center_list)
+    print(cost_center_data['list'])
+    assert cost_center_list == cost_center_data['list']
+    
 
 def test_update_success(cur):
     user = _login()
@@ -165,21 +167,89 @@ def test_freeze_success(cur):
     assert response[0] == 0 
 
 
-def test_unfreeze_success(cur):
+def test_personal_success(cur):
     user = _login()
-    #获取一个cost_center_id
-    cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])
-    res = cur.fetchone()
-    cost_center_id = res[0] if res is not None else 0
-    response = _post('cost_center/unfreeze', {'cost_center_id': cost_center_id})   
-    print(response)
-     
+    data = {'pid': 0, 'serial_no': 'serial_no0002', 'title':'the second test cost center', 'type':'1', 'user_id':user['user_id']}
+    response = _post('cost_center/personal', {'user_id': user['user_id']})
+    assert response['status'] == 0
+    personal_cost_center = response['data']['list'][0]
+    assert personal_cost_center['user_id'] == user['user_id']
+    assert personal_cost_center['title'] == data['title']
+    assert personal_cost_center['serial_no'] == data['serial_no']
+
+
+def test_user_success(cur):
+    user = _login()
+    # insert test data into database
+    cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])  
+    cost_center_id = cur.fetchone()[0]
+    cur.execute('update clb_user set cost_center_id = %s where id = %s' % (cost_center_id, user['user_id']) )
+    #test api
+    response = _post('cost_center/user', {'cost_center_id': cost_center_id})
+    assert response['status'] == 0
+    assert response['data']['list'] == [user['user_id']]
+
+
+def test_user_error_empty(cur):
+    '''
+        当cost_center_id不存在的情况
+    '''
+    response = _post('cost_center/user', {'cost_center_id': -1})
+    assert response['status'] == 0
+    assert response['data']['list'] == []
+    
+
+def test_items_success(cur):
+    user = _login()
+    cur.execute('select * from clb_cost_center where company_id = %s' % user['company_id'])  
+    cost_center = cur.fetchone()
+    response = _post('cost_center/items', {'cost_center_id': cost_center[0]})
+    #build test data
+    assert_data = [{
+        u'parent_cost_center_name': u'',
+        u'cost_center_id': int(cost_center[0]),
+        u'title': unicode(cost_center[1])
+    }]
+    assert assert_data == response['data']['list']
+      
+
+def test_secondary_success(cur):
+    #获取一个父节点
+    user = _login()
+    cur.execute('select * from clb_cost_center where enable =1 and company_id = %s' % user['company_id'])  
+    cost_center = cur.fetchone()
+    #添加成本中心数量
+    query = '''insert into clb_company_configuration (company_id, type, value) values (%s, 'cost_center_num', 77)''' % user['company_id']
+    cur.execute(query)
+    #向父节点添加一个子节点
+    data = {'pid': cost_center[0], 'serial_no': 'serial_no0003', 'title':'the third test cost center', 'type':'1', 'user_id':7}
+    child_cost_center = _post('cost_center/create', data)['data']
+    
+    response = _post('cost_center/secondary',{})
+    assert response['status'] == 0
+    #build assert data
+    assert_data = []
+    assert_data.append({
+        u'parent_cost_center_name': u'',
+        u'cost_center_id': 0,
+        u'cost_center_name': u'\u5168\u516c\u53f8'
+    }) 
+    assert_data.append({
+        u'parent_cost_center_name': unicode(cost_center[1]),
+        u'cost_center_id': int(child_cost_center['cost_center_id']),
+        u'cost_center_name': unicode(child_cost_center['title'])
+    }) 
+    assert assert_data == response['data']['list']
+
+
+def test_recent_success(cur):
+    pass
 
 
 if __name__ == '__main__':
     conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='123123', db='demo27', port=3306)
     cur = conn.cursor()
-    test_unfreeze_success(cur)
-     
+    test_secondary_success(cur) 
+    conn.commit()
     conn.close()
     print('all test passed')
