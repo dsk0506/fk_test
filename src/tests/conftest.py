@@ -20,8 +20,8 @@ def db_init():
     #mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
     mysql_conn = 'mysql -h %s -u%s -P%s ' % (host, user, port)
     init_shell = mysql_conn+' -N -s information_schema -e ' + '\"SELECT CONCAT(\'TRUNCATE TABLE \',TABLE_NAME,\';\') FROM TABLES WHERE TABLE_SCHEMA=\''+ name + '\'\"'+'|' +mysql_conn + ' -f '+ name
-    print init_shell
-    #os.system(init_shell)
+    #print init_shell
+    os.system(init_shell)
     print "这里面数据库初始化"
 
 
@@ -34,12 +34,12 @@ def mongo_init():
     mongo_db = config.get_config('mongo', 'db_name')
     mongo_port = int(config.get_config('mongo', 'db_port'))
     mongo_conn = 'mongo %s:%s/%s' %(mongo_host,mongo_port,mongo_db)
-    init_shell = mongo_conn+" --quiet --eval 'db.dropDatabase();'"
+    init_shell = mongo_conn+" --quiet --eval 'db.dropDatabase();db.counter.insert({_id:\"apply_id\",req:NumberLong(0)});db.counter.insert({_id:\"serial_no\",req:NumberLong(0)})'"
     print init_shell
     os.system(init_shell)
     print "这里面mongo初始化"
 
-
+mongo_init()
 def redis_init():
     '''
     redis清空
@@ -76,6 +76,7 @@ def cur(request):
     name = config.get_config('database', 'db_name')
     port = config.get_config('database', 'db_port')
     conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=name, port=int(port))
+    conn.autocommit(True)
     db_cur = conn.cursor()
     return db_cur
 
