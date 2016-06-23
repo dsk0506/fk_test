@@ -39,7 +39,7 @@ def mongo_init():
     os.system(init_shell)
     print "这里面mongo初始化"
 
-mongo_init()
+
 def redis_init():
     '''
     redis清空
