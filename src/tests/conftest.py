@@ -17,13 +17,14 @@ def db_init():
     passwd = config.get_config('database', 'db_password')
     name = config.get_config('database', 'db_name')
     port = config.get_config('database', 'db_port')
-    mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
+    #mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
+    mysql_conn = 'mysql -h %s -u%s -P%s ' % (host, user, port)
     init_shell = mysql_conn+' -N -s information_schema -e ' + '\"SELECT CONCAT(\'TRUNCATE TABLE \',TABLE_NAME,\';\') FROM TABLES WHERE TABLE_SCHEMA=\''+ name + '\'\"'+'|' +mysql_conn + ' -f '+ name
-
-    os.system(init_shell)
+    print init_shell
+    #os.system(init_shell)
     print "这里面数据库初始化"
 
-
+db_init()
 def mongo_init():
     '''
     mongo初始化
