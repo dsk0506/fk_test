@@ -20,7 +20,7 @@ def db_init():
     mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
     init_shell = mysql_conn+' -N -s information_schema -e ' + '\"SELECT CONCAT(\'TRUNCATE TABLE \',TABLE_NAME,\';\') FROM TABLES WHERE TABLE_SCHEMA=\''+ name + '\'\"'+'|' +mysql_conn + ' -f '+ name
 
-    #os.system(init_shell)
+    os.system(init_shell)
     print "这里面数据库初始化"
 
 
@@ -35,7 +35,7 @@ def mongo_init():
     mongo_conn = 'mongo %s:%s/%s' %(mongo_host,mongo_port,mongo_db)
     init_shell = mongo_conn+" --quiet --eval 'db.dropDatabase();'"
     print init_shell
-    # os.system(init_shell)
+    os.system(init_shell)
     print "这里面mongo初始化"
 
 
@@ -49,7 +49,7 @@ def redis_init():
     redis_port = int(config.get_config('redis', 'port'))
     redis_shell = 'redis-cli -h %s -p %s -n %s' %(redis_host,redis_port,redis_db)
     init_shell = redis_shell+' KEYS "*" | xargs '+redis_shell+' DEL'
-    #os.system(init_shell);
+    os.system(init_shell);
     print "这里面redis初始化"
 
 
