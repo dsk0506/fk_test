@@ -1,4 +1,5 @@
 #!env/bin/python
-import pytest  
+import pytest
+import os
 
-exit(pytest.main("-q -s ./src/tests"))
+exit(pytest.main("-q -s " + os.getcwd() + "/src/tests"))
