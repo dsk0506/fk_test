@@ -77,9 +77,11 @@ def user_init():
     url = config.get_config('app', 'host') + '/ucenter/company/create'
     principal = "丁守坤"
     data = {'fullname_zh': "全程费控公司", 'principal': principal, 'telephone': phone, 'code': captcha['code'],
-            'email': '393573645%40qq.com', 'shortname': '费控', 'license': ''}
+            'email': '393573645@qq.com', 'shortname': '费控', 'license': ''}
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0', 'X-From': 'www'}
-    requests.post(url, data=data, headers=headers)
+    company = requests.post(url, data=data, headers=headers)
+    company_id = json.loads(company.text)['data']['company_id']
+    assert company_id == 1
     print  "休息下让队列跑一会"
     time.sleep(15)
     url = config.get_config('app', 'host') + '/ucenter/login'
@@ -96,4 +98,22 @@ def user_init():
             "INSERT INTO `clb_user` VALUES  (null, '18616369918', '27345eea93fa977403c9f0e4471638b8', '18616369918', '18616369917@1.com', '组长', '丁守坤管控', '1', null, '0', '2', '0', '0', null, '2016-06-24 14:21:00', '2016-06-24 14:20:53', null, '1', null, '12')")
         print db_cur._last_executed
         op_uid = int(db_cur.lastrowid)
-    print '管控用户创建:' + str(op_uid)
+        db_cur.execute('INSERT INTO `clb_role`(`user_id`,`role`, `item_id`,`item_type`) VALUES(%s,%s,%s,%s)',[op_uid,16,company_id,15])
+
+    print '管控用户登录'
+    data = {'username': str('18616369918'), "password": str(phone)[-6:]}
+    res = requests.post(url, data=data, headers=headers)
+    assert byteify(json.loads(res.text))['status'] == 0
+    token = byteify(json.loads(res.text))['data']['token']
+
+    print '管控用户开通企业'
+    url = config.get_config('app', 'host') + '/ucenter/company/open'
+    headers['token'] = token
+    data = {'company_id': company_id,'principal':principal,'telephone':phone,'email':'393573645@qq.com','fullname_zh':'全程费控公司','surl':'abc','paying_type':1,\
+    'enable_book_flight':2,'hotel_book_status':0,'cost_num':3,'expire_time':'2017-06-23','address':'233','phone':'323','header':'qcfk','license':'',\
+    'shortname':'qcfk','fullname_en':'','origin':0,'attachment':'','company_certify':1,'status':0,'certified':0,'manager':'','create_at':'',\
+    'domain':'http://img.qccost.com/'}
+    res = requests.post(url, data=data, headers=headers)
+    assert byteify(json.loads(res.text))['status'] == 0
+    print '企业开通成功'
+
