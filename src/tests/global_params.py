@@ -4,7 +4,7 @@ import json
 
 
 host = 'http://php.fk.com/'
-headers = {'Encryption': '', 'Agent': '', 'VersionCode': '', 'Token': ''}
+headers = {'Encryption': 'CLB_NONE', 'Agent': '', 'VersionCode': '', 'Token': ''}
 token = ''
 
 
