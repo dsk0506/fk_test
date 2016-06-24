@@ -43,3 +43,24 @@ def test_standard_create(cur):
     assert data['status'] == 0
     return
 
+
+@auth
+def standard_update(cur):
+    '''
+    请求数据
+    :param cur:
+    :return:
+    '''
+    data = {'cost_type_id': 10, 'formula': 0, 'list': [{"user_level_id": "20", "city_level_id": -1, "money": "300"}]}
+    response = global_params.post('budget/standards/update', data)
+    return response
+
+def test_standard_update(cur):
+    '''
+    费用标准更新
+    :param cur:
+    :return:
+    '''
+    data = standard_update(cur)
+    assert data['status'] == 0
+    return
