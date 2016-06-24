@@ -9,4 +9,6 @@ export PYTHONPATH=`pwd`/src
 安装依赖
 pip install -r requirement.txt
 开始测试
-src/test.py
+source bin/env.sh
+启动
+run
