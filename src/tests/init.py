@@ -2,7 +2,8 @@
 from config import config
 import os, requests, time, json
 import global_params
-from  common import redis_con
+from  common import redis_con, db
+
 
 def db_init():
     host = config.get_config('database', 'db_host')
@@ -80,7 +81,7 @@ def user_init():
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0', 'X-From': 'www'}
     requests.post(url, data=data, headers=headers)
     print  "休息下让队列跑一会"
-    time.sleep(10)
+    time.sleep(15)
     url = config.get_config('app', 'host') + '/ucenter/login'
     data = {'username': str(phone), "password": str(phone)[-6:]}
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}
@@ -89,3 +90,10 @@ def user_init():
     global_params.token = byteify(json.loads(res.text))['data']['token']
     print "token:" + global_params.token
     print "插入管控后台用户并设置给与权限"
+    with db:
+        db_cur = db.cursor()
+        db_cur.execute(
+            "INSERT INTO `clb_user` VALUES  (null, '18616369918', '27345eea93fa977403c9f0e4471638b8', '18616369918', '18616369917@1.com', '组长', '丁守坤管控', '1', null, '0', '2', '0', '0', null, '2016-06-24 14:21:00', '2016-06-24 14:20:53', null, '1', null, '12')")
+        print db_cur._last_executed
+        op_uid = int(db_cur.lastrowid)
+    print '管控用户创建:' + str(op_uid)
