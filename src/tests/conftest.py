@@ -6,7 +6,7 @@ import pymongo
 import os
 from config import config
 import requests, time, json
-
+import global_params
 
 def db_init():
     '''
@@ -93,13 +93,14 @@ def user_init():
     requests.post(url, data=data, headers=headers)
     print  "休息下让队列跑一会"
     time.sleep(10)
-    print "尝试登录"
     url = config.get_config('app', 'host') + '/ucenter/login'
     data = {'username': str(phone), "password": str(phone)[-6:]}
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}
     res = requests.post(url, data=data, headers=headers)
     assert byteify(json.loads(res.text))['status'] == 0
-    print "登录成功"
+    global_params.token = byteify(json.loads(res.text))['data']['token']
+    print   global_params.token
+
 
 
 @pytest.fixture(scope="session", autouse=True)
