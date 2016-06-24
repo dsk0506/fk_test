@@ -92,7 +92,7 @@ def user_init():
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0', 'X-From': 'www'}
     requests.post(url, data=data, headers=headers)
     print  "休息下让队列跑一会"
-    time.sleep(10)
+    time.sleep(20)
     url = config.get_config('app', 'host') + '/ucenter/login'
     data = {'username': str(phone), "password": str(phone)[-6:]}
     headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}
