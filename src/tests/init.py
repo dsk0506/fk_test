@@ -116,5 +116,12 @@ def user_init():
     res = requests.post(url, data=data, headers=headers)
     assert byteify(json.loads(res.text))['status'] == 0
     print '企业开通成功'
-    log('test','hehe')
-
+    log('test', "正式用户开始登陆")
+    url = config.get_config('app', 'host') + '/ucenter/login'
+    data = {'username': str(phone), "password": str(phone)[-6:]}
+    headers = {'Encryption': 'CLB_NONE', 'Agent': '(IOS;1.0.0;IPhone)', 'VersionCode': '5.0.0'}
+    res = requests.post(url, data=data, headers=headers)
+    assert byteify(json.loads(res.text))['status'] == 0
+    global_params.token = byteify(json.loads(res.text))['data']['token']
+    log('test', "token:" + global_params.token)
+    log('test', "正式用户登陆成功")
