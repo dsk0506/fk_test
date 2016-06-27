@@ -2,7 +2,7 @@
 from config import config
 import os, requests, time, json
 import global_params
-from  common import redis_con, db
+from  common import redis_con, db, log
 
 
 def db_init():
@@ -116,4 +116,5 @@ def user_init():
     res = requests.post(url, data=data, headers=headers)
     assert byteify(json.loads(res.text))['status'] == 0
     print '企业开通成功'
+    log('test','hehe')
 
