@@ -1,5 +1,5 @@
 # coding:utf-8
-import MySQLdb, redis, pymongo, logging, datetime, traceback
+import MySQLdb, redis, pymongo, datetime, traceback
 from config import config
 
 
