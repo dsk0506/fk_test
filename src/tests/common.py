@@ -9,7 +9,7 @@ def db_connect():
     passwd = config.get_config('database', 'db_password')
     name = config.get_config('database', 'db_name')
     port = config.get_config('database', 'db_port')
-    conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=name, port=int(port))
+    conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=name, port=int(port), charset='utf8')
     conn.autocommit(True)
     return conn
 
