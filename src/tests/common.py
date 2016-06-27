@@ -45,3 +45,15 @@ def log(name, info):
     sys.stdout.write(str(info)+'\n')
     with output:
         output.write(str(trace))
+
+
+# 把json的unicode 转化为字符串
+def byteify(input):
+    if isinstance(input, dict):
+        return {byteify(key): byteify(value) for key, value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input

@@ -1,8 +1,9 @@
 # coding:utf-8
 from config import config
+from common import redis_con, db, log, byteify
 import os, requests, time, json
 import global_params
-from  common import redis_con, db, log
+
 
 
 def db_init():
@@ -45,18 +46,6 @@ def redis_init():
     init_shell = redis_shell + ' KEYS "*" | xargs ' + redis_shell + ' DEL'
     os.system(init_shell);
     print "这里面redis初始化"
-
-
-# 把json的unicode 转化为字符串
-def byteify(input):
-    if isinstance(input, dict):
-        return {byteify(key): byteify(value) for key, value in input.iteritems()}
-    elif isinstance(input, list):
-        return [byteify(element) for element in input]
-    elif isinstance(input, unicode):
-        return input.encode('utf-8')
-    else:
-        return input
 
 
 def user_init():

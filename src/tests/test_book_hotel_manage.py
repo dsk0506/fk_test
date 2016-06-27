@@ -66,7 +66,6 @@ def hotel_policy_update(params):
 def test_hotel_policy_update():
     """
     酒店管理-酒店政策
-    :param cur:
     :return:
     """
     log('book_hotel', '开始测试酒店政策')
@@ -122,4 +121,32 @@ def test_hotel_standard_list():
     data = hotel_standard_list()
     assert data['status'] == 0
     log('book_hotel', '酒店费用标准测试结束')
+    return
+
+
+def test_hotel_standard_update():
+    return
+
+
+@auth
+def role_update(params):
+    """
+    请求api
+    :param params:
+    :return:
+    """
+    data = {"role":19, "user_id":"10,11,12"}
+    response = global_params.post('ucenter/role/update', data)
+    return response
+
+
+def test_role_update():
+    """
+    酒店白名单
+    :return:
+    """
+    log("book_hotel", '开始测试酒店白名单')
+    data = role_update()
+    assert data['status'] == 0
+    log("book_hotel", "酒店白名单测试结束")
     return
