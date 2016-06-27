@@ -39,7 +39,7 @@ def standard_create(cur):
 
 def test_standard_create(cur):
     """
-    费用标准创建
+    费用标准创建测试
     :param cur:
     :return:
     """
@@ -62,7 +62,7 @@ def standard_update(cur):
 
 def test_standard_update(cur):
     """
-    费用标准更新
+    费用标准更新测试
     :param cur:
     :return:
     """
@@ -71,6 +71,23 @@ def test_standard_update(cur):
     return
 
 
+@auth
 def standard_delete():
-    print 123
+    """
+    费用标准删除
+    :return:
+    """
+    data = {'cost_type_id' : 10}
+    response = global_params.post('budget/standards/delete',data)
+    return response
+
+
+def test_standard_delete(cur):
+    """
+    费用标准删除测试
+    :param cur:
+    :return:
+    """
+    data = standard_delete(cur)
+    assert data['status'] == 0
     return
