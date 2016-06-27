@@ -52,19 +52,21 @@ def _connect_mysql():
     return db_cur 
 
 
-db_cur = _connect_mysql()
-#将自己的用户的company_id改掉
-phone = config.get_config('app','phone')
-query = '''update clb_user set company_id = 777 where telephone = %s''' % phone
-db_cur.execute(query)
-#修改该用户公司的配置，添加成本中心数量
-query = '''insert into clb_company_configuration (company_id, type, value) values (777, 'cost_center_num', 99)'''
-db_cur.execute(query) 
-#清理cost_center数据
-query = '''delete from clb_cost_center where company_id != 777''' 
-db_cur.execute(query) 
-print('成本中心初始化完成')
+def _init(db_cur):
+    #将自己的用户的company_id改掉
+    phone = config.get_config('app','phone')
+    query = '''update clb_user set company_id = 777 where telephone = %s''' % phone
+    db_cur.execute(query)
+    #修改该用户公司的配置，添加成本中心数量
+    query = '''insert into clb_company_configuration (company_id, type, value) values (777, 'cost_center_num', 99)'''
+    db_cur.execute(query) 
+    #清理cost_center数据
+    query = '''delete from clb_cost_center where company_id != 777''' 
+    db_cur.execute(query) 
 
+
+def test_init_success(cur):
+    _init(cur)
 
 
 def test_create_success(cur):
@@ -141,150 +143,146 @@ def test_list_success(cur):
     assert cost_center_list == cost_center_data['list']
     
 
-def test_update_success(cur):
-    user = _login()
-    cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])
-    res = cur.fetchone()
-    cost_center_id = res[0] if res is not None else 0
-    #build test data
-    data = {
-        'cost_center_id': cost_center_id,
-        'enable': 0,
-        'pid': 0,
-        'serial_no': 'serial_no_0002',
-        'title': 'title have been updated',
-        'user_id': user['user_id'] 
-    }
-    response = _post('cost_center/update', data)
-    assert response['status'] == 0
-    assert response['message'].encode('utf-8') == '更新成功'
-    #build assert data
-    principal = _principal(user['user_id'])
-    assert_data = {
-        u'enable': u'0',
-        u'title': u'title have been updated',
-        u'serial_no': u'serial_no_0002',
-        u'pid': u'0',
-        u'cost_center_id': int(cost_center_id),
-        u'children': [],
-        u'principal': principal
-    }
-    print assert_data
-    print response['data']
-    assert assert_data == response['data']
+# def test_update_success(cur):
+    # user = _login()
+    # cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])
+    # res = cur.fetchone()
+    # cost_center_id = res[0] if res is not None else 0
+    # #build test data
+    # data = {
+        # 'cost_center_id': cost_center_id,
+        # 'enable': 0,
+        # 'pid': 0,
+        # 'serial_no': 'serial_no_0002',
+        # 'title': 'title have been updated',
+        # 'user_id': user['user_id'] 
+    # }
+    # response = _post('cost_center/update', data)
+    # assert response['status'] == 0
+    # assert response['message'].encode('utf-8') == '更新成功'
+    # #build assert data
+    # principal = _principal(user['user_id'])
+    # assert_data = {
+        # u'enable': u'0',
+        # u'title': u'title have been updated',
+        # u'serial_no': u'serial_no_0002',
+        # u'pid': u'0',
+        # u'cost_center_id': int(cost_center_id),
+        # u'children': [],
+        # u'principal': principal
+    # }
+    # print assert_data
+    # print response['data']
+    # assert assert_data == response['data']
     
 
-def test_update_error_cost_center():
-    #build test data
-    data = {
-        'cost_center_id': 0,
-        'enable': 1,
-        'pid': 0,
-        'serial_no': 'serial_no_0002',
-        'title': 'title have been updated',
-        'user_id': 777 
-    }
-    response = _post('cost_center/update', data)
-    assert response['status'] == 2502
-    assert response['message'].encode('utf-8') == '成本中心不存在'
+# def test_update_error_cost_center():
+    # #build test data
+    # data = {
+        # 'cost_center_id': 0,
+        # 'enable': 1,
+        # 'pid': 0,
+        # 'serial_no': 'serial_no_0002',
+        # 'title': 'title have been updated',
+        # 'user_id': 777 
+    # }
+    # response = _post('cost_center/update', data)
+    # assert response['status'] == 2502
+    # assert response['message'].encode('utf-8') == '成本中心不存在'
 
 
-def test_freeze_success(cur):
-    user = _login()
-    #获取一个cost_center_id
-    cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])
-    res = cur.fetchone()
-    cost_center_id = res[0] if res is not none else 0
+# def test_freeze_success(cur):
+    # user = _login()
+    # #获取一个cost_center_id
+    # cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])
+    # res = cur.fetchone()
+    # cost_center_id = res[0] if res is not None else 0
     
-    response = _post('cost_center/freeze', {'cost_center_id': cost_center_id})   
-    assert response['status'] == 0
-    assert response['message'].encode('utf-8') == '停用成功'
-    #判断数据在数据库中是否生效 
-    cur.execute('select enable from clb_cost_center where id = %s' % cost_center_id)
-    response = cur.fetchone()
-    assert response[0] == 0 
+    # response = _post('cost_center/freeze', {'cost_center_id': cost_center_id})   
+    # assert response['status'] == 0
+    # assert response['message'].encode('utf-8') == '停用成功'
+    # #判断数据在数据库中是否生效 
+    # cur.execute('select enable from clb_cost_center where id = %s' % cost_center_id)
+    # response = cur.fetchone()
+    # assert response[0] == 0 
 
 
-def test_personal_success(cur):
-    user = _login()
-    response = _post('cost_center/personal', {'user_id': user['user_id']})
-    assert response['status'] == 0
-    personal_cost_center = response['data']['list'][0]
-    assert personal_cost_center['user_id'] == user['user_id']
-    assert personal_cost_center['title'] == data['title']
-    assert personal_cost_center['serial_no'] == data['serial_no']
+# def test_personal_success(cur):
+    # user = _login()
+    # response = _post('cost_center/personal', {'user_id': user['user_id']})
+    # assert response['status'] == 0
+    # personal_cost_center = response['data']['list'][0]
+    # assert personal_cost_center['user_id'] == user['user_id']
+    # assert personal_cost_center['title'] == data['title']
+    # assert personal_cost_center['serial_no'] == data['serial_no']
 
 
-def test_user_success(cur):
-    user = _login()
-    # insert test data into database
-    cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])  
-    cost_center_id = cur.fetchone()[0]
-    cur.execute('update clb_user set cost_center_id = %s where id = %s' % (cost_center_id, user['user_id']) )
-    #test api
-    response = _post('cost_center/user', {'cost_center_id': cost_center_id})
-    assert response['status'] == 0
-    assert response['data']['list'] == [user['user_id']]
+# def test_user_success(cur):
+    # user = _login()
+    # # insert test data into database
+    # cur.execute('select id from clb_cost_center where company_id = %s' % user['company_id'])  
+    # cost_center_id = cur.fetchone()[0]
+    # cur.execute('update clb_user set cost_center_id = %s where id = %s' % (cost_center_id, user['user_id']) )
+    # #test api
+    # response = _post('cost_center/user', {'cost_center_id': cost_center_id})
+    # assert response['status'] == 0
+    # assert response['data']['list'] == [user['user_id']]
 
 
-def test_user_error_empty(cur):
-    '''
-        当cost_center_id不存在的情况
-    '''
-    response = _post('cost_center/user', {'cost_center_id': -1})
-    assert response['status'] == 0
-    assert response['data']['list'] == []
+# def test_user_error_empty(cur):
+    # '''
+        # 当cost_center_id不存在的情况
+    # '''
+    # response = _post('cost_center/user', {'cost_center_id': -1})
+    # assert response['status'] == 0
+    # assert response['data']['list'] == []
     
 
-def test_items_success(cur):
-    user = _login()
-    cur.execute('select * from clb_cost_center where company_id = %s' % user['company_id'])  
-    cost_center = cur.fetchone()
-    response = _post('cost_center/items', {'cost_center_id': cost_center[0]})
-    #build test data
-    assert_data = [{
-        u'parent_cost_center_name': u'',
-        u'cost_center_id': int(cost_center[0]),
-        u'title': unicode(cost_center[1])
-    }]
-    assert assert_data == response['data']['list']
+# def test_items_success(cur):
+    # user = _login()
+    # cur.execute('select * from clb_cost_center where company_id = %s' % user['company_id'])  
+    # cost_center = cur.fetchone()
+    # response = _post('cost_center/items', {'cost_center_id': cost_center[0]})
+    # #build test data
+    # assert_data = [{
+        # u'parent_cost_center_name': u'',
+        # u'cost_center_id': int(cost_center[0]),
+        # u'title': unicode(cost_center[1])
+    # }]
+    # assert assert_data == response['data']['list']
       
 
-def test_secondary_success(cur):
-    #获取一个父节点
-    user = _login()
-    cur.execute('select * from clb_cost_center where enable =1 and company_id = %s' % user['company_id'])  
-    cost_center = cur.fetchone()
-    #向父节点添加一个子节点
-    data = {'pid': cost_center[0], 'serial_no': 'serial_no0003', 'title':'the third test cost center', 'type':'1', 'user_id':7}
-    child_cost_center = _post('cost_center/create', data)['data']
+# def test_secondary_success(cur):
+    # #获取一个父节点
+    # user = _login()
+    # cur.execute('select * from clb_cost_center where enable =1 and company_id = %s' % user['company_id'])  
+    # cost_center = cur.fetchone()
+    # #向父节点添加一个子节点
+    # data = {'pid': cost_center[0], 'serial_no': 'serial_no0003', 'title':'the third test cost center', 'type':'1', 'user_id':7}
+    # child_cost_center = _post('cost_center/create', data)['data']
     
-    response = _post('cost_center/secondary',{})
-    assert response['status'] == 0
-    #build assert data
-    assert_data = []
-    assert_data.append({
-        u'parent_cost_center_name': u'',
-        u'cost_center_id': 0,
-        u'cost_center_name': u'\u5168\u516c\u53f8'
-    }) 
-    assert_data.append({
-        u'parent_cost_center_name': unicode(cost_center[1]),
-        u'cost_center_id': int(child_cost_center['cost_center_id']),
-        u'cost_center_name': unicode(child_cost_center['title'])
-    }) 
-    assert assert_data == response['data']['list']
+    # response = _post('cost_center/secondary',{})
+    # assert response['status'] == 0
+    # #build assert data
+    # assert_data = []
+    # assert_data.append({
+        # u'parent_cost_center_name': u'',
+        # u'cost_center_id': 0,
+        # u'cost_center_name': u'\u5168\u516c\u53f8'
+    # }) 
+    # assert_data.append({
+        # u'parent_cost_center_name': unicode(cost_center[1]),
+        # u'cost_center_id': int(child_cost_center['cost_center_id']),
+        # u'cost_center_name': unicode(child_cost_center['title'])
+    # }) 
+    # assert assert_data == response['data']['list']
 
 
-def test_recent_success(cur):
-    pass
+# def test_recent_success(cur):
+    # pass
 
 
 if __name__ == '__main__':
-    conn = MySQLdb.connect(host='php.fk.com', user='root', passwd='', db='demo27', port=3306)
-    cur = conn.cursor()
-    test_update_success(cur)
-    conn.close()
-    # principal = _principal(6)
-    # print principal 
+    cur = _connect_mysql()
+    test_list_success(cur)
     print('all test passed')
