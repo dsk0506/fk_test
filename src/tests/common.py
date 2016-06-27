@@ -1,5 +1,5 @@
 # coding:utf-8
-import MySQLdb, redis, pymongo, datetime, traceback
+import MySQLdb, redis, pymongo, datetime, traceback, sys
 from config import config
 
 
@@ -40,7 +40,8 @@ mongo_client = mongo_connect()
 
 def log(name, info):
     filename = '/tmp/log.debug.' + name + '-' + datetime.datetime.now().strftime('%Y-%m-%d') + '.log'
-    trace = traceback.extract_stack()[-2][:3], info
+    trace = traceback.extract_stack()[-2][:3], str(info)
     output = open(filename, 'a')
+    sys.stdout.write(str(info)+'\n')
     with output:
         output.write(str(trace))
