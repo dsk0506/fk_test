@@ -66,25 +66,26 @@ def home_company_create(params):
 def test_home_company_create():
     """
     预订采购管理-机票政策公示展示
-    :param cur:
     :return:
     """
     log('book_flight', '开始测试机票管理政策展示状态')
     data = home_company_create()
     assert data['status'] == 0
-    assert data['data']['value'] == 1
+    assert data['data']['value'] == '1'
     log('book_flight', '机票管理政策展示状态测试结束')
     return
 
 @auth
-def role_update():
+def role_update(params):
     """
     机票白名单数据更新
+    :param params
     :return:
     """
-    data = {"book_flight": 18, "user_id": "10,11,12"}
+    data = {"role": 18, "user_id": "10,11,12"}
     response = global_params.post('ucenter/role/update', data)
     return response
+
 
 def test_role_update():
     """

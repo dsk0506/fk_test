@@ -76,10 +76,12 @@ def test_hotel_policy_update():
     log('book_hotel', '酒店政策测试结束')
     return
 
+
 @auth
-def hotel_policy_config():
+def hotel_policy_config(params):
     """
     酒店政策公示状态
+    :param params
     :return:
     """
     data = {"enable": 1}
@@ -98,10 +100,12 @@ def test_hotel_policy_config():
     log('book_hotel', '酒店政策公示状态测试结束')
     return
 
+
 @auth
-def hotel_standard_list():
+def hotel_standard_list(params):
     """
     酒店费用标准
+    :param params
     :return:
     """
 

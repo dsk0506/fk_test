@@ -29,7 +29,6 @@ def mongo_init():
     mongo_port = int(config.get_config('mongo', 'db_port'))
     mongo_conn = 'mongo %s:%s/%s' % (mongo_host, mongo_port, mongo_db)
     init_shell = mongo_conn + " --quiet --eval 'db.dropDatabase();db.counter.insert({_id:\"apply_id\",req:NumberLong(0)});db.counter.insert({_id:\"serial_no\",req:NumberLong(0)})'"
-    print init_shell
     os.system(init_shell)
     print "这里面mongo初始化"
 
@@ -96,7 +95,6 @@ def user_init():
         db_cur = db.cursor()
         db_cur.execute(
             "INSERT INTO `clb_user` VALUES  (null, '18616369918', '27345eea93fa977403c9f0e4471638b8', '18616369918', '18616369917@1.com', '组长', '丁守坤管控', '1', null, '0', '2', '0', '0', null, '2016-06-24 14:21:00', '2016-06-24 14:20:53', null, '1', null, '12')")
-        print db_cur._last_executed
         op_uid = int(db_cur.lastrowid)
         db_cur.execute('INSERT INTO `clb_role`(`user_id`,`role`, `item_id`,`item_type`) VALUES(%s,%s,%s,%s)',[op_uid,16,company_id,15])
 
