@@ -56,3 +56,11 @@ def test_calendar_daily_detail():
     assert rs['status'] == 0, rs['message']
     assert rs['data']['content'] == '我的日报', rs['message']
     log('calendar', "日报详情成功")
+
+
+def test_calendar_checkin_poi():
+    log('calendar', "兴趣点开始")
+    data = {"keyword": "", "lat": "31.27690836588542", "lng": "121.5386794704861", "next_start_index": 0, "type": 1}
+    rs = global_params.post('/calendar/checkin/poi', data)
+    assert rs['status'] == 0, rs['message']
+    log('calendar', "兴趣点成功")
