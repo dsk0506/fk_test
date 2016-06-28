@@ -125,7 +125,9 @@ def test_hotel_standard_list():
 
 
 def test_hotel_standard_update():
-    return
+    data = {"list":[{"user_level_id": 32,"city_level_id": 8, "money":300, "status": 0}]}
+    response = global_params.post('home/hotel/standard_update', data)
+    return response
 
 
 @auth
