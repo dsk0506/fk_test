@@ -113,3 +113,16 @@ def test_ucenter_level_update():
     assert len(rs['data']['list']) == 2, rs['message']
     assert rs['data']['list'][1]['title'] == title, rs['message']
     log('ucenter', "职级更新成功")
+
+
+def test_ucenter_level_exchange():
+    log('ucenter', "职级排序开始")
+    data = {"source_id": "2", "target_id": "3"}
+    rs = global_params.post('/ucenter/level/exchange', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    assert rs['data']['list'][1]['title'] == '总经理', rs['message']
+    log('ucenter', "职级排序成功")
