@@ -128,10 +128,16 @@ def test_ucenter_level_exchange():
     log('ucenter', "职级排序成功")
 
 
+import json
+
 
 def test_ucenter_level_cabin(cur):
     log('ucenter', "限制机票舱开始")
-    data = [{"level_id":"2","title":"总经理","cabin_rank":"1","rank":"0"}]
+    json_string = json.dumps([{"level_id": "2", "title": "总经理", "cabin_rank": "1", "rank": "1"}])
+    data = {"cabin_rank": json_string}
     rs = global_params.post('/ucenter/level/cabin', data)
     assert rs['status'] == 0, rs['message']
+    cur.execute("select * from clb_user_level where id=2")
+    rs = cur.fetchone()
+    assert rs[3] == 1
     log('ucenter', "限制机票舱成功")
