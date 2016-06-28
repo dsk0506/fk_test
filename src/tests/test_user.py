@@ -68,7 +68,7 @@ def test_calendar_checkin_poi():
 
 def test_ucenter_level_create():
     log('ucenter', "职级创建开始")
-    data = {"title":"ceo"}
+    data = {"title": "ceo"}
     rs = global_params.post('/ucenter/level/create', data)
     assert rs['status'] == 0, rs['message']
     data = {"title": "总经理"}
@@ -91,7 +91,7 @@ def test_ucenter_level_list():
 
 def test_ucenter_level_delete():
     log('ucenter', "职级删除开始")
-    data = {"level_id":"1"}
+    data = {"level_id": "1"}
     rs = global_params.post('/ucenter/level/delete', data)
     assert rs['status'] == 0, rs['message']
     data = {}
@@ -99,3 +99,17 @@ def test_ucenter_level_delete():
     assert rs['status'] == 0, rs['message']
     assert len(rs['data']['list']) == 2, rs['message']
     log('ucenter', "职级删除成功")
+
+
+def test_ucenter_level_update():
+    log('ucenter', "职级更新开始")
+    title = "副总经理"
+    data = {"level_id": "3", "title": title}
+    rs = global_params.post('/ucenter/level/update', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    assert rs['data']['list'][1]['title'] == title, rs['message']
+    log('ucenter', "职级更新成功")
