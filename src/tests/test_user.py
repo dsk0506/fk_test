@@ -71,4 +71,31 @@ def test_ucenter_level_create():
     data = {"title":"ceo"}
     rs = global_params.post('/ucenter/level/create', data)
     assert rs['status'] == 0, rs['message']
+    data = {"title": "总经理"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
+    data = {"title": "副总经理"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
     log('ucenter', "职级创建成功")
+
+
+def test_ucenter_level_list():
+    log('ucenter', "职级列表开始")
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 3, rs['message']
+    log('ucenter', "职级列表成功")
+
+
+def test_ucenter_level_delete():
+    log('ucenter', "职级删除开始")
+    data = {"level_id":"1"}
+    rs = global_params.post('/ucenter/level/delete', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    log('ucenter', "职级删除成功")
