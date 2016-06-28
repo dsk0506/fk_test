@@ -64,3 +64,80 @@ def test_calendar_checkin_poi():
     rs = global_params.post('/calendar/checkin/poi', data)
     assert rs['status'] == 0, rs['message']
     log('calendar', "兴趣点成功")
+
+
+def test_ucenter_level_create():
+    log('ucenter', "职级创建开始")
+    data = {"title": "ceo"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
+    data = {"title": "总经理"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
+    data = {"title": "副总经理"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
+    log('ucenter', "职级创建成功")
+
+
+def test_ucenter_level_list():
+    log('ucenter', "职级列表开始")
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 3, rs['message']
+    log('ucenter', "职级列表成功")
+
+
+def test_ucenter_level_delete():
+    log('ucenter', "职级删除开始")
+    data = {"level_id": "1"}
+    rs = global_params.post('/ucenter/level/delete', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    log('ucenter', "职级删除成功")
+
+
+def test_ucenter_level_update():
+    log('ucenter', "职级更新开始")
+    title = "副总经理"
+    data = {"level_id": "3", "title": title}
+    rs = global_params.post('/ucenter/level/update', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    assert rs['data']['list'][1]['title'] == title, rs['message']
+    log('ucenter', "职级更新成功")
+
+
+def test_ucenter_level_exchange():
+    log('ucenter', "职级排序开始")
+    data = {"source_id": "2", "target_id": "3"}
+    rs = global_params.post('/ucenter/level/exchange', data)
+    assert rs['status'] == 0, rs['message']
+    data = {}
+    rs = global_params.post('/ucenter/level/list', data)
+    assert rs['status'] == 0, rs['message']
+    assert len(rs['data']['list']) == 2, rs['message']
+    assert rs['data']['list'][1]['title'] == '总经理', rs['message']
+    log('ucenter', "职级排序成功")
+
+
+import json
+
+
+def test_ucenter_level_cabin(cur):
+    log('ucenter', "限制机票舱开始")
+    json_string = json.dumps([{"level_id": "2", "title": "总经理", "cabin_rank": "1", "rank": "1"}])
+    data = {"cabin_rank": json_string}
+    rs = global_params.post('/ucenter/level/cabin', data)
+    assert rs['status'] == 0, rs['message']
+    cur.execute("select * from clb_user_level where id=2")
+    rs = cur.fetchone()
+    assert rs[3] == 1
+    log('ucenter', "限制机票舱成功")
