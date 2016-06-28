@@ -126,3 +126,12 @@ def test_ucenter_level_exchange():
     assert len(rs['data']['list']) == 2, rs['message']
     assert rs['data']['list'][1]['title'] == '总经理', rs['message']
     log('ucenter', "职级排序成功")
+
+
+
+def test_ucenter_level_cabin(cur):
+    log('ucenter', "限制机票舱开始")
+    data = [{"level_id":"2","title":"总经理","cabin_rank":"1","rank":"0"}]
+    rs = global_params.post('/ucenter/level/cabin', data)
+    assert rs['status'] == 0, rs['message']
+    log('ucenter', "限制机票舱成功")
