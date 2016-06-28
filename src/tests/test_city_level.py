@@ -52,13 +52,13 @@ def test_city_level_update():
     :return:
     """
     log("city_level", "开始测试城市级别更新")
-    # data_list = city_level_list()
+    data_list = city_level_list()
 
-    # print data_list
-    # level_id = data_list['data'][-1]['id']
-    # data = {"name": "三线城市", "city_ids": "53,62", "level_id": level_id}
-    # response = global_params.post('gis/citylevel/update', data)
-    # assert response['status'] == 0
+
+    level_id = data_list['data'][-1]['id']
+    data = {"name": "三线城市", "city_ids": "53,62", "level_id": level_id}
+    response = global_params.post('gis/citylevel/update', data)
+    assert response['status'] == 0
     log("city_level", "城市级别更新测试结束")
     return
 

@@ -15,8 +15,10 @@ def db_init():
     # mysql_conn = 'mysql -h %s -u%s -p%s -P%s ' %(host,user,passwd,port)
     mysql_conn = 'mysql -h %s -u%s -P%s ' % (host, user, port)
     init_shell = mysql_conn + ' -N -s information_schema -e ' + '\"SELECT CONCAT(\'TRUNCATE TABLE \',TABLE_NAME,\';\') FROM TABLES WHERE TABLE_SCHEMA=\'' + name + '\'\"' + '|' + mysql_conn + ' -f ' + name
-    # print init_shell
     os.system(init_shell)
+    # 城市数据初始化
+    city_init = mysql_conn+'-D'+name+' -e \'source '+ os.path.dirname(__file__)+"/../config/clb_city.sql\'"
+    os.system(city_init)
     print "这里面数据库初始化"
 
 
