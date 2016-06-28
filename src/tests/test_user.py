@@ -64,3 +64,11 @@ def test_calendar_checkin_poi():
     rs = global_params.post('/calendar/checkin/poi', data)
     assert rs['status'] == 0, rs['message']
     log('calendar', "兴趣点成功")
+
+
+def test_ucenter_level_create():
+    log('ucenter', "职级创建开始")
+    data = {"title":"ceo"}
+    rs = global_params.post('/ucenter/level/create', data)
+    assert rs['status'] == 0, rs['message']
+    log('ucenter', "职级创建成功")
