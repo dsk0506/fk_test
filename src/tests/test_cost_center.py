@@ -2,6 +2,7 @@
 import global_params
 from common import db
 
+
 def test_cost_center_list():
     """
     成本中心列表，默认创建一个
@@ -10,7 +11,7 @@ def test_cost_center_list():
     response = global_params.post('cost_center/list')
     cost_center_data = response['data']
     assert len(cost_center_data['list']) == 1
-    assert cost_center_data['total'] == 1
+    assert cost_center_data['total'] == 3
     assert cost_center_data['creatable'] == 0
     return
 
@@ -37,8 +38,6 @@ def test_cost_center_update():
     cost_center_data = db_cur.fetchone()
     print cost_center_data[0]
     return
-
-test_cost_center_update()
 
 def test_cost_center_freeze():
     return
