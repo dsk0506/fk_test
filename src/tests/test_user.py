@@ -166,5 +166,18 @@ def test_ucenter_user_getcode(cur):
     assert rs['status'] == 0, rs['message']
     cur.execute("select * from clb_verify where field=%(phone)s", {"phone": phone})
     rs = cur.fetchone()
-    print rs
+    captcha = rs[4]
     log('cost_center', "获取激活验证码成功")
+    data = {"verify_type": 1, "verify_code": captcha, "verify_field": phone, "is_modify": 0}
+    rs = global_params.post('/ucenter/user/verify', data)
+    print rs
+    hash = rs['data']['hash']
+    password = 123456
+    data = {"telephone":phone,"password":password,"hash":hash,"superior":-1}
+    rs = global_params.post('/ucenter/user/activate', data)
+    assert rs['status'] == 0, rs['message']
+    data = {'username': phone, "password": password}
+    rs = global_params.post('/ucenter/login', data)
+    assert rs['status'] == 0
+    log('cost_center', "激活用户成功")
+
