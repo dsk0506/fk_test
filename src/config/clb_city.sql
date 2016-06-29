@@ -10682,11 +10682,6 @@ INSERT INTO `clb_city` (`id`, `pid`, `name`, `level`, `type`, `sort`, `name_en`,
 --
 -- Indexes for table `clb_city`
 --
---ALTER TABLE `clb_city`
---ADD KEY `city_name` (`name`),
---ADD KEY `city_level` (`level`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 

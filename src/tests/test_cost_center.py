@@ -13,7 +13,7 @@ def test_cost_center_list():
     cost_center_data = response['data']
     assert len(cost_center_data['list']) == 1
     assert cost_center_data['total'] == 3
-    assert cost_center_data['creatable'] == 0, cost_center_data['message']
+    assert cost_center_data['creatable'] == 3, response['message']
     log('cost_center', '成本中心列表测试结束')
     return
 
@@ -43,13 +43,14 @@ def test_cost_center_update():
     log('cost_center', '成本中心更新测试开始')
     db_cur = db.cursor()
     # 取刚创建的cost_center
-    db_cur.execute('select * from clb_cost_center order by id desc limit 1')
+    db_cur.execute('select id,pid,user_id from clb_cost_center order by id desc limit 1')
     cost_center_data = db_cur.fetchone()
-    db.close()
     id = cost_center_data[0]
-    data = {'cost_center_id': id, 'title': '全程费控123'}
+    pid = cost_center_data[1]
+    user_id = cost_center_data[2]
+    data = {'cost_center_id': id, 'title': '全程费控123', 'serial_no': 'qcfk123', 'pid': pid, 'user_id': user_id}
     response = global_params.post('cost_center/update', data)
-    assert response['status'] == 0
+    assert response['status'] == 0, response['message']
     assert response['data']['title'] == '全程费控123', response['message']
     log('cost_center', '成本中心更新测试结束')
     return
@@ -65,7 +66,6 @@ def test_cost_center_freeze():
     # 取刚创建的cost_center
     db_cur.execute('select * from clb_cost_center order by id desc limit 1')
     cost_center_data = db_cur.fetchone()
-    db.close()
     id = cost_center_data[0]
     data = {'cost_center_id': id}
     response = global_params.post('cost_center/freeze', data)
@@ -84,7 +84,6 @@ def test_cost_center_unfreeze():
     # 取刚创建的cost_center
     db_cur.execute('select * from clb_cost_center order by id desc limit 1')
     cost_center_data = db_cur.fetchone()
-    db.close()
     id = cost_center_data[0]
     data = {'cost_center_id': id}
     response = global_params.post('cost_center/freeze', data)
@@ -108,7 +107,6 @@ def test_cost_center_overview():
     # 取刚创建的cost_center
     db_cur.execute('select * from clb_cost_center order by id desc limit 1')
     cost_center_data = db_cur.fetchone()
-    db.close()
     id = cost_center_data[0]
     data = {'cost_center_id': id}
     response = global_params.post('cost_center/overview', data)
