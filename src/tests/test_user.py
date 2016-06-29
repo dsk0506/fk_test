@@ -1,6 +1,7 @@
 # coding:utf-8
 import global_params
 from common import log
+import json
 
 global_params.headers['Token'] = global_params.token
 
@@ -128,9 +129,6 @@ def test_ucenter_level_exchange():
     log('ucenter', "职级排序成功")
 
 
-import json
-
-
 def test_ucenter_level_cabin(cur):
     log('ucenter', "限制机票舱开始")
     json_string = json.dumps([{"level_id": "2", "title": "总经理", "cabin_rank": "1", "rank": "1"}])
@@ -141,3 +139,32 @@ def test_ucenter_level_cabin(cur):
     rs = cur.fetchone()
     assert rs[3] == 1
     log('ucenter', "限制机票舱成功")
+
+
+def test_cost_center_list():
+    log('cost_center', "费用中心列表开始")
+    data = {"enable": "1"}
+    rs = global_params.post('/cost_center/list', data)
+    assert rs['status'] == 0, rs['message']
+    log('cost_center', "费用中心列表成功")
+
+
+def test_ucenter_user_invite():
+    log('cost_center', "邀请员工开始")
+    data = {"fullname": "帅哥", "email": "dsk0506@163.com", "superior": "-1", "cost_center_id": 13, "level_id": 2,
+            "telephone": "18616369919"}
+    rs = global_params.post('/ucenter/user/invite', data)
+    assert rs['status'] == 0, rs['message']
+    log('cost_center', "邀请员工成功")
+
+
+def test_ucenter_user_getcode(cur):
+    log('cost_center', "获取激活验证码开始")
+    phone = "18616369919"
+    data = {"verify_type": 1, "verify_field": phone, "is_check": 1}
+    rs = global_params.post('/ucenter/user/getcode', data)
+    assert rs['status'] == 0, rs['message']
+    cur.execute("select * from clb_verify where field=%(phone)s", {"phone": phone})
+    rs = cur.fetchone()
+    print rs
+    log('cost_center', "获取激活验证码成功")
