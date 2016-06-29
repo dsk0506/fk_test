@@ -158,9 +158,13 @@ def test_ucenter_user_invite():
     log('cost_center', "邀请员工成功")
 
 
-def test_ucenter_user_getcode():
+def test_ucenter_user_getcode(cur):
     log('cost_center', "获取激活验证码开始")
-    data = {"verify_type":1,"verify_field":18616369919,"is_check":1}
+    phone = "18616369919"
+    data = {"verify_type": 1, "verify_field": phone, "is_check": 1}
     rs = global_params.post('/ucenter/user/getcode', data)
     assert rs['status'] == 0, rs['message']
+    cur.execute("select * from clb_verify where field=%(phone)s", {"phone": phone})
+    rs = cur.fetchone()
+    print rs
     log('cost_center', "获取激活验证码成功")

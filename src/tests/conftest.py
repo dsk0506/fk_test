@@ -21,7 +21,7 @@ def cur(request):
             db_cur.close()
             db.close()
 
-    request.addfinalizer(fin)
+    #request.addfinalizer(fin)
     db_cur = db.cursor()
     return db_cur
 
