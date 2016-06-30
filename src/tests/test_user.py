@@ -181,36 +181,6 @@ def test_ucenter_user_getcode(cur):
     log('cost_center', "激活用户成功")
 
 
-def test_ucenter_user_activate_list(cur):
-    data = {'is_active': 1}
-    res = global_params.post('/ucenter/user/list', data)    
-    assert res['status'] == 0
-    assert len(res['data']['list']) == 2
 
-
-def test_ucenter_user_not_activate_list(cur):
-    phone = "18616369919"
-    cur.execute('update clb_user set is_active = 2 where telephone = %s' % phone) 
-    data = {'is_active': 2}
-    res = global_params.post('/ucenter/user/list', data)    
-    assert res['status'] == 0
-    print res['data']['list']
-    assert len(res['data']['list']) == 1
-    
-    
-def test_ucenter_user_disabled_list(cur):
-    phone = "18616369919"
-    cur.execute('update clb_user set is_active = 0 where telephone = %s' % phone) 
-    data = {'is_active': 0}
-    res = global_params.post('/ucenter/user/list', data)    
-    assert res['status'] == 0
-    assert len(res['data']['list']) == 1
-    
-
-def test_ucenter_user_search(cur):
-    data = {'is_active': 1, 'keyword':'18616369917'}
-    res = global_params.post('/ucenter/user/list', data)    
-    assert res['status'] == 0
-    assert res['data']['list'][0]['telephone'] == '18616369917'
 
 
