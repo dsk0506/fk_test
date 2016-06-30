@@ -170,7 +170,6 @@ def test_ucenter_user_getcode(cur):
     log('cost_center', "获取激活验证码成功")
     data = {"verify_type": 1, "verify_code": captcha, "verify_field": phone, "is_modify": 0}
     rs = global_params.post('/ucenter/user/verify', data)
-    print rs
     hash = rs['data']['hash']
     password = 123456
     data = {"telephone":phone,"password":password,"hash":hash,"superior":-1}
@@ -180,4 +179,7 @@ def test_ucenter_user_getcode(cur):
     rs = global_params.post('/ucenter/login', data)
     assert rs['status'] == 0
     log('cost_center', "激活用户成功")
+
+
+
 
