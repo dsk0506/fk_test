@@ -80,3 +80,42 @@ def test_cost_list():
     check_response(response)
     log('apply', '费用列表测试结束')
     pass
+
+
+def test_my_apply_list():
+    """
+    我的申请单
+    :return:
+    """
+    log('mine', '我的申请单测试开始')
+    data = {'agent': 1, 'next_start_index': 0}
+    response = global_params.post('apply/requisition/list', data)
+    check_response(response)
+    log('mine', '我的申请单测试结束')
+    pass
+
+
+def test_my_expense_list():
+    """
+    我的报销单
+    :return:
+    """
+    log('mine', '我的报销单测试开始')
+    data = {'agent': 1, 'next_start_index': 0}
+    response = global_params.post('apply/expense/list', data)
+    check_response(response)
+    log('mine', '我的报销单测试结束')
+    pass
+
+
+def test_my_cost_list():
+    """
+    费用
+    :return:
+    """
+    log('mine', '我的费用列表测试开始')
+    data = {'agent': 1, 'next_start_index': 0}
+    response = global_params.post('apply/cost/list', data)
+    check_response(response)
+    log('mine', '我的费用列表测试结束')
+    pass
