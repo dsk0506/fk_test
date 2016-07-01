@@ -13,7 +13,7 @@ def check_response(response):
     next_start_index = response['data']['next_start_index']
     list_count = len(response['data']['list'])
     if list_count >= 0 and list_count < 15:
-        assert next_start_index == -1
+        assert int(next_start_index) == -1
     else:
         assert next_start_index == 15
     pass
