@@ -27,6 +27,12 @@ def test_apply_type_create():
     assert rs['status'] == 0, rs['message']
     assert len(rs['data']['list']) == 4, rs['message']
     log('apply_type', "申请单类型创建成功")
+    log('apply_type', "申请单类型修改开始")
+    data = {"item_type": "19", "title": "123", "content": "123", "cost_able": 0,"apply_type":apply_type}
+    rs = global_params.post('/apply/type/update', data)
+    assert rs['status'] == 0, rs['message']
+    assert rs['data']['title'] == "123", rs['message']
+    log('apply_type', "申请单类型修改成功")
     data = {"apply_type": apply_type}
     rs = global_params.post('/apply/type/delete', data)
     assert rs['status'] == 0, rs['message']
