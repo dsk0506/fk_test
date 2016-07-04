@@ -5,7 +5,7 @@ from init import byteify
 
 host = 'http://php.fk.com/'
 headers = {'Encryption': 'CLB_NONE', 'Agent': '', 'VersionCode': '', 'Token': ''}
-token = ''
+token = '3f0a1bad2de6f5ebc9110c685f4a7144'
 
 
 def post(route, data=None):
