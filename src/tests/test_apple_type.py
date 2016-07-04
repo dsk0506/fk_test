@@ -21,14 +21,17 @@ def test_apply_type_create():
     rs = global_params.post('/apply/type/create', data)
     assert rs['status'] == 0, rs['message']
     assert rs['data']['title'] == "申请单类型添加测试", rs['message']
+    apply_type = rs['data']['apply_type']
     data = {"item_type": "19"}
     rs = global_params.post('/apply/type/list', data)
     assert rs['status'] == 0, rs['message']
     assert len(rs['data']['list']) == 4, rs['message']
-    apply_type = rs['data']['apply_type']
     log('apply_type', "申请单类型创建成功")
     data = {"apply_type": apply_type}
     rs = global_params.post('/apply/type/delete', data)
+    assert rs['status'] == 0, rs['message']
+    data = {"item_type": "19"}
+    rs = global_params.post('/apply/type/list', data)
     assert rs['status'] == 0, rs['message']
     assert len(rs['data']['list']) == 3, rs['message']
     log('apply_type', "申请单类型删除成功")
