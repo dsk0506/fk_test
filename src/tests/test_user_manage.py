@@ -3,6 +3,7 @@
 import global_params
 from common import db,config,log
 
+
 def test_ucenter_user_activate_list(cur):
     log('user_manage', '使用中用户列表测试开始')
     data = {'is_active': 1}
